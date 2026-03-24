@@ -1,0 +1,10 @@
+{% extends "base.html" %}
+{% block title %}Error – Anti-Doping{% endblock %}
+
+{% block content %}
+<div style="text-align: center; padding: 60px 20px;">
+  <h1 style="color: var(--red, #dc2626); margin-bottom: 16px;">Access Denied</h1>
+  <p style="color: var(--muted); margin-bottom: 24px; font-size: 16px;">{{ error }}</p>
+  <a href="/" style="color: var(--gold); text-decoration: none; font-weight: 600;">← Return to Home</a>
+</div>
+{% endblock %}

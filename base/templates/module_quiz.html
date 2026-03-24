@@ -1,0 +1,208 @@
+{% extends "base.html" %}
+{% block title %}Quiz – {{ module.title }}{% endblock %}
+
+{% block extra_head %}
+<style>
+.quiz-wrap { max-width: 760px; margin: 0 auto; }
+.quiz-wrap h1 { font-family:var(--ff-head);font-weight:800;font-size:clamp(24px,4vw,36px);letter-spacing:-.5px;margin-bottom:6px; }
+.quiz-wrap .sub { color:var(--muted);margin-bottom:28px;font-size:15px; }
+
+.result-banner {
+  background:var(--white);border:1.5px solid var(--border);
+  border-radius:var(--radius-lg);padding:24px;margin-bottom:24px;
+}
+.r-icon {
+  width:52px;height:52px;border-radius:13px;
+  display:grid;place-items:center;font-size:28px;
+  float:left;margin-right:16px;
+}
+.r-icon.pass { background:var(--green-lt);color:var(--green); }
+.r-icon.fail { background:var(--red-lt);color:var(--red); }
+.r-title { font-family:var(--ff-head);font-weight:800;font-size:20px;margin-bottom:4px; }
+.r-desc { color:var(--muted);font-size:14px;margin-bottom:16px; }
+.r-actions { display:flex;gap:10px;flex-wrap:wrap;clear:both; }
+
+.name-box {
+  background:var(--white);border:1.5px solid var(--border);
+  border-radius:var(--radius-lg);padding:20px;margin-bottom:16px;
+}
+.name-box label { display:block;font-weight:700;font-size:14px;margin-bottom:8px; }
+.name-input {
+  width:100%;padding:11px 14px;
+  border:1.5px solid var(--border);
+  border-radius:var(--radius-sm);
+  font-family:var(--ff-body);font-size:15px;
+  outline:none;transition:border-color .2s;
+}
+.name-input:focus { border-color:var(--gold);box-shadow:0 0 0 3px rgba(232,164,0,.15); }
+
+.q-card {
+  background:var(--white);border:1.5px solid var(--border);
+  border-radius:var(--radius-lg);padding:22px;margin-bottom:14px;
+  transition:border-color .2s;
+}
+.q-card:focus-within { border-color:var(--gold); }
+.q-top { display:flex;gap:12px;align-items:flex-start;margin-bottom:14px; }
+.q-num {
+  width:28px;height:28px;background:var(--ink);color:white;
+  border-radius:7px;display:grid;place-items:center;
+  font-family:var(--ff-head);font-weight:800;font-size:12px;flex-shrink:0;
+}
+.q-text { font-weight:700;font-size:15px;line-height:1.4; }
+.options { display:grid;grid-template-columns:1fr 1fr;gap:8px;padding-left:40px; }
+.opt-label {
+  display:flex;align-items:center;gap:8px;padding:10px 12px;
+  border:1.5px solid var(--border);border-radius:var(--radius-sm);
+  cursor:pointer;font-size:14px;transition:all .15s;
+}
+.opt-label:hover { border-color:var(--gold);background:var(--gold-lt); }
+input[type="radio"] { 
+  margin-right: 0;
+  width: auto;
+  height: auto;
+}
+input[type="radio"]:checked + .opt-label { border-color:var(--gold);background:var(--gold-lt);font-weight:600; }
+.submit-area { text-align:center;margin-top:24px;padding-top:20px;border-top:1px solid var(--border); }
+
+.nav-bar {
+  display:flex;align-items:center;justify-content:space-between;
+  gap:12px;background:var(--white);border:1.5px solid var(--border);
+  border-radius:var(--radius-lg);padding:18px 22px;margin-top:20px;
+}
+.nav-bar-center { font-size:13.5px;color:var(--muted);font-weight:600;text-align:center; }
+
+@media(max-width:600px){ .options{grid-template-columns:1fr;} }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="quiz-wrap">
+
+  <!-- Breadcrumb -->
+  <div style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--muted);margin-bottom:24px;">
+    <a href="/modules/" style="color:var(--muted);">Modules</a>
+    <span>/</span>
+    <a href="/module/{{ module.id }}/" style="color:var(--muted);">{{ module.title }}</a>
+    <span>/</span>
+    <span style="color:var(--ink);font-weight:600;">Quiz</span>
+  </div>
+
+  <h1>Quiz: {{ module.title }}</h1>
+  <p class="sub">Score ≥60% to unlock the next module.</p>
+
+  {% if submitted %}
+  <div class="result-banner">
+    <div class="r-icon {% if passed %}pass{% else %}fail{% endif %}">
+      {% if passed %}
+        <i class="bi bi-trophy-fill" aria-hidden="true"></i>
+      {% else %}
+        <i class="bi bi-x-circle-fill" aria-hidden="true"></i>
+      {% endif %}
+    </div>
+    <div class="r-title">
+      {% if passed %}
+        🎉 Passed! ({{ score }}/{{ total }} · {{ percentage }}%)
+      {% else %}
+        Not Passed ({{ score }}/{{ total }} · {{ percentage }}%)
+      {% endif %}
+    </div>
+    <p class="r-desc">
+      {% if passed %}
+        Great work! Proceed to the next module.
+      {% else %}
+        You need ≥60% to proceed. Review the module and try again.
+      {% endif %}
+    </p>
+    <div class="r-actions">
+      {% if passed %}
+        {% if next_module %}
+          <a href="/module/{{ next_module.id }}/" class="btn btn-gold">
+            Next Module <i class="bi bi-arrow-right-circle-fill"></i>
+          </a>
+        {% else %}
+          <a href="/quiz/" class="btn btn-gold">
+            <i class="bi bi-patch-check-fill"></i> Take Final Quiz
+          </a>
+        {% endif %}
+        <a href="/modules/" class="btn btn-outline">
+          <i class="bi bi-grid"></i> All Modules
+        </a>
+      {% else %}
+        <a href="/module/{{ module.id }}/" class="btn btn-dark">
+          <i class="bi bi-book"></i> Re-read Module
+        </a>
+        <a href="/module/{{ module.id }}/quiz/" class="btn btn-gold">
+          <i class="bi bi-arrow-repeat"></i> Try Again
+        </a>
+      {% endif %}
+    </div>
+  </div>
+  {% endif %}
+
+  {% if not submitted %}
+  <form method="POST">
+    {% csrf_token %}
+    <div class="name-box">
+      <label><i class="bi bi-person-fill" style="color:var(--gold);margin-right:4px;"></i> Your Name</label>
+      <input type="text" name="student_name" class="name-input" placeholder="Enter your name" required />
+    </div>
+
+    {% for q in questions %}
+    <div class="q-card">
+      <div class="q-top">
+        <div class="q-num">{{ forloop.counter }}</div>
+        <div class="q-text">{{ q.question }}</div>
+      </div>
+      <div class="options">
+        <input type="radio" id="q_{{ q.id }}_A" name="q_{{ q.id }}" value="A" required>
+        <label class="opt-label" for="q_{{ q.id }}_A">{{ q.option_a }}</label>
+        <input type="radio" id="q_{{ q.id }}_B" name="q_{{ q.id }}" value="B">
+        <label class="opt-label" for="q_{{ q.id }}_B">{{ q.option_b }}</label>
+        <input type="radio" id="q_{{ q.id }}_C" name="q_{{ q.id }}" value="C">
+        <label class="opt-label" for="q_{{ q.id }}_C">{{ q.option_c }}</label>
+        <input type="radio" id="q_{{ q.id }}_D" name="q_{{ q.id }}" value="D">
+        <label class="opt-label" for="q_{{ q.id }}_D">{{ q.option_d }}</label>
+      </div>
+    </div>
+    {% endfor %}
+
+    {% if not questions %}
+    <div style="text-align:center;padding:40px;background:var(--white);border:1px dashed var(--border);border-radius:var(--radius-lg);">
+      <p style="color:var(--muted);">No questions added for this module yet.</p>
+      <p style="color:var(--muted);font-size:13px;">Go to Admin → Quiz Questions → assign to this module.</p>
+    </div>
+    {% else %}
+    <div class="submit-area">
+      <button type="submit" class="btn btn-gold" style="padding:14px 32px;font-size:15px;">
+        <i class="bi bi-send-fill"></i> Submit Answers
+      </button>
+    </div>
+    {% endif %}
+  </form>
+  {% endif %}
+
+  <!-- Bottom nav bar -->
+  <div class="nav-bar">
+    <a href="/module/{{ module.id }}/" class="btn btn-outline">
+      <i class="bi bi-arrow-left"></i> Back to Module
+    </a>
+    <div class="nav-bar-center">
+      Module {{ module.order }} Quiz
+    </div>
+    {% if submitted and passed and next_module %}
+      <a href="/module/{{ next_module.id }}/" class="btn btn-gold">
+        Next Module <i class="bi bi-arrow-right"></i>
+      </a>
+    {% elif submitted and passed and not next_module %}
+      <a href="/quiz/" class="btn btn-gold">
+        Final Quiz <i class="bi bi-arrow-right"></i>
+      </a>
+    {% else %}
+      <span class="btn btn-outline" style="opacity:.4;cursor:not-allowed;">
+        Next Module <i class="bi bi-arrow-right"></i>
+      </span>
+    {% endif %}
+  </div>
+
+</div>
+{% endblock %}

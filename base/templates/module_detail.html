@@ -1,0 +1,151 @@
+{% extends "base.html" %}
+{% block title %}{{ module.title }}{% endblock %}
+
+{% block extra_head %}
+<style>
+.module-wrap { max-width: 780px; margin: 0 auto; }
+
+.mod-progress {
+  background: var(--white);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 16px 22px;
+  margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.mod-progress-label {
+  font-family: var(--ff-head);
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--ink);
+}
+.mod-progress-sub {
+  font-size: 12.5px;
+  color: var(--muted);
+  margin-top: 2px;
+}
+.mod-steps {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+.mod-step {
+  width: 28px; height: 6px;
+  border-radius: 99px;
+  background: var(--border);
+}
+.mod-step.done  { background: var(--green); }
+.mod-step.active { background: var(--gold); }
+
+.mod-header { margin-bottom: 24px; }
+.mod-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: var(--gold-lt); color: #9a6700;
+  font-size: 12px; font-weight: 700;
+  padding: 5px 12px; border-radius: 99px; margin-bottom: 12px;
+}
+.mod-header h1 {
+  font-family: var(--ff-head); font-weight: 800;
+  font-size: clamp(24px,4vw,36px); letter-spacing: -.5px;
+}
+
+.content-card {
+  background: var(--white);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 36px;
+  font-size: 15.5px;
+  line-height: 1.85;
+  color: var(--ink-3);
+  margin-bottom: 28px;
+  white-space: pre-wrap;
+}
+
+.nav-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  background: var(--white);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 18px 22px;
+}
+.nav-bar-center {
+  font-size: 13.5px;
+  color: var(--muted);
+  font-weight: 600;
+  text-align: center;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="module-wrap">
+
+  <!-- Breadcrumb -->
+  <div style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--muted);margin-bottom:20px;">
+    <a href="/" style="color:var(--muted);"><i class="bi bi-house"></i> Home</a>
+    <span>/</span>
+    <a href="/modules/" style="color:var(--muted);">Modules</a>
+    <span>/</span>
+    <span style="color:var(--ink);font-weight:600;">{{ module.title }}</span>
+  </div>
+
+  <!-- Progress bar -->
+  <div class="mod-progress">
+    <div>
+      <div class="mod-progress-label">Module {{ module.order }} of {{ total_modules }}</div>
+      <div class="mod-progress-sub">Read the content then take the quiz</div>
+    </div>
+    <div class="mod-steps">
+      {% for m in all_modules %}
+        {% if m.id in passed_modules %}
+          <div class="mod-step done"></div>
+        {% elif m.id == module.id %}
+          <div class="mod-step active"></div>
+        {% else %}
+          <div class="mod-step"></div>
+        {% endif %}
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- Module header -->
+  <div class="mod-header">
+    <div class="mod-badge">
+      <i class="bi bi-bookmark-fill"></i> Module {{ module.order }}
+    </div>
+    <h1>{{ module.title }}</h1>
+  </div>
+
+  <!-- Content -->
+  <div class="content-card">{{ module.content }}</div>
+
+  <!-- Navigation -->
+  <div class="nav-bar">
+    {% if prev_module %}
+      <a href="/module/{{ prev_module.id }}/" class="btn btn-outline">
+        <i class="bi bi-arrow-left"></i> Previous
+      </a>
+    {% else %}
+      <a href="/modules/" class="btn btn-outline">
+        <i class="bi bi-grid"></i> All Modules
+      </a>
+    {% endif %}
+
+    <div class="nav-bar-center">
+      Module {{ module.order }} of {{ total_modules }}
+    </div>
+
+    <a href="/module/{{ module.id }}/quiz/" class="btn btn-gold">
+      Take Quiz <i class="bi bi-pencil-square"></i>
+    </a>
+  </div>
+
+</div>
+{% endblock %}

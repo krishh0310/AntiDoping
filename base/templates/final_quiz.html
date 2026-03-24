@@ -1,0 +1,244 @@
+{% extends "base.html" %}
+{% block title %}Final Quiz – Anti-Doping{% endblock %}
+
+{% block extra_head %}
+<style>
+.quiz-wrap { max-width: 760px; margin: 0 auto; }
+.quiz-header { text-align:center; margin-bottom:32px; }
+.quiz-header h1 { font-family:var(--ff-head);font-weight:800;font-size:clamp(26px,4vw,38px);letter-spacing:-.5px;margin-bottom:8px; }
+.quiz-header p  { color:var(--muted);font-size:15px; }
+
+.module-section-label {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin: 28px 0 14px;
+  font-family: var(--ff-head);
+  font-weight: 700;
+  font-size: 14px;
+  color: var(--ink-3);
+}
+.module-section-label::after {
+  content: '';
+  flex: 1;
+  height: 1px;
+  background: var(--border);
+}
+.module-section-badge {
+  background: var(--gold-lt);
+  color: #9a6700;
+  font-size: 11.5px;
+  font-weight: 700;
+  padding: 4px 10px;
+  border-radius: 99px;
+  white-space: nowrap;
+}
+
+.result-banner {
+  background:var(--white);border:1.5px solid var(--border);
+  border-radius:var(--radius-lg);padding:28px;margin-bottom:28px;
+  text-align:center;
+}
+.r-icon-big {
+  font-size:52px;margin-bottom:12px;
+}
+.r-title { font-family:var(--ff-head);font-weight:800;font-size:26px;margin-bottom:6px; }
+.r-desc  { color:var(--muted);font-size:15px;margin-bottom:20px; }
+.score-boxes { display:flex;gap:14px;justify-content:center;flex-wrap:wrap;margin-bottom:20px; }
+.score-box { background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px 22px;min-width:100px;text-align:center; }
+.score-val { font-family:var(--ff-head);font-size:28px;font-weight:900;color:var(--ink); }
+.score-val.gold { color:var(--gold); }
+.score-val.green { color:var(--green); }
+.score-lbl { font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-top:3px; }
+
+.name-box { background:var(--white);border:1.5px solid var(--border);border-radius:var(--radius-lg);padding:20px;margin-bottom:16px; }
+.name-box label { display:block;font-weight:700;font-size:14px;margin-bottom:8px; }
+.name-input { width:100%;padding:11px 14px;border:1.5px solid var(--border);border-radius:var(--radius-sm);font-family:var(--ff-body);font-size:15px;outline:none;transition:border-color .2s; }
+.name-input:focus { border-color:var(--gold);box-shadow:0 0 0 3px rgba(232,164,0,.15); }
+
+.q-card { background:var(--white);border:1.5px solid var(--border);border-radius:var(--radius-lg);padding:22px;margin-bottom:12px;transition:border-color .2s; }
+.q-card:focus-within { border-color:var(--gold); }
+.q-top { display:flex;gap:12px;align-items:flex-start;margin-bottom:14px; }
+.q-num { width:28px;height:28px;background:var(--ink);color:white;border-radius:7px;display:grid;place-items:center;font-family:var(--ff-head);font-weight:800;font-size:12px;flex-shrink:0; }
+.q-text { font-weight:700;font-size:15px;line-height:1.4; }
+.options { 
+  display:grid;
+  grid-template-columns:1fr 1fr;
+  gap:12px;
+  padding-left:0;
+  margin-top:16px;
+}
+.options input[type="radio"] { 
+  display:none;
+}
+.opt-label { 
+  display:flex;
+  align-items:center;
+  justify-content:center;
+  gap:8px;
+  padding:14px 16px;
+  border:2px solid var(--border);
+  border-radius:10px;
+  cursor:pointer;
+  font-size:14px;
+  font-weight:500;
+  transition:all .2s ease;
+  min-height:50px;
+  text-align:center;
+  background:var(--white);
+  user-select:none;
+}
+.opt-label:hover { 
+  border-color:var(--gold);
+  background:var(--gold-lt);
+  transform:translateY(-2px);
+  box-shadow:0 4px 12px rgba(232,164,0,.15);
+}
+input[type="radio"]:checked + .opt-label { 
+  border-color:var(--gold);
+  background:var(--gold-lt);
+  font-weight:600;
+  box-shadow:0 4px 12px rgba(232,164,0,.25);
+}
+
+.progress-bar { background:var(--border);border-radius:99px;height:4px;margin-bottom:24px;overflow:hidden; }
+.progress-fill { height:100%;background:linear-gradient(90deg,var(--gold),#f0c040);border-radius:99px;transition:width .3s;width:0%; }
+
+.submit-area { text-align:center;margin-top:28px;padding-top:24px;border-top:1px solid var(--border); }
+.submit-area .btn { padding:14px 36px;font-size:15px; }
+
+@media(max-width:600px){ .options{grid-template-columns:1fr;} }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="quiz-wrap">
+
+  <!-- Header -->
+  <div class="quiz-header">
+    <h1>🏆 Final Quiz</h1>
+    <p>Answer the final assessment questions. Score ≥60% to earn your certificate.</p>
+  </div>
+
+  <!-- Result banner -->
+  {% if submitted %}
+  <div class="result-banner">
+    {% if passed %}
+      <div class="r-icon-big">🎉</div>
+      <div class="r-title" style="color:var(--green);">Congratulations! You Passed!</div>
+    {% else %}
+      <div class="r-icon-big">😔</div>
+      <div class="r-title" style="color:var(--red);">Not Passed</div>
+    {% endif %}
+
+    <div class="r-desc">
+      {% if passed %}
+        You have successfully completed the Anti-Doping Awareness Course!
+      {% else %}
+        You need at least 60% to pass. Review the modules and try again.
+      {% endif %}
+    </div>
+
+    <div class="score-boxes">
+      <div class="score-box">
+        <div class="score-val">{{ score }}/{{ total }}</div>
+        <div class="score-lbl">Score</div>
+      </div>
+      <div class="score-box">
+        <div class="score-val {% if passed %}green{% else %}score-val{% endif %}">{{ percentage }}%</div>
+        <div class="score-lbl">Percentage</div>
+      </div>
+      <div class="score-box">
+        <div class="score-val gold">60%</div>
+        <div class="score-lbl">Pass Mark</div>
+      </div>
+    </div>
+
+    {% if passed %}
+      <a href="/certificate/{{ result.id }}/" class="btn btn-gold" style="padding:14px 28px;font-size:15px;">
+        <i class="bi bi-award-fill"></i> Get Your Certificate!
+      </a>
+    {% else %}
+      <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
+        <a href="/modules/" class="btn btn-dark">
+          <i class="bi bi-book"></i> Review Modules
+        </a>
+        <a href="/quiz/" class="btn btn-gold">
+          <i class="bi bi-arrow-repeat"></i> Try Again
+        </a>
+      </div>
+    {% endif %}
+  </div>
+  {% endif %}
+
+  <!-- Quiz form -->
+  {% if not submitted %}
+  <div class="progress-bar"><div class="progress-fill" id="prog"></div></div>
+
+  <form method="POST">
+    {% csrf_token %}
+
+    <div class="name-box">
+      <label><i class="bi bi-person-fill" style="color:var(--gold);margin-right:4px;"></i> Your Full Name</label>
+      <input type="text" name="student_name" class="name-input" placeholder="Enter your name for the certificate" required />
+    </div>
+
+    {% if questions %}
+      <div class="module-section-label">
+        <span class="module-section-badge">
+          <i class="bi bi-patch-question-fill"></i> Final Assessment
+        </span>
+      </div>
+
+      {% for q in questions %}
+      <div class="q-card">
+        <div class="q-top">
+          <div class="q-num">{{ forloop.counter }}</div>
+          <div class="q-text">{{ q.question }}</div>
+        </div>
+        <div class="options">
+          <input type="radio" id="q_{{ q.id }}_A" name="q_{{ q.id }}" value="A" required>
+          <label class="opt-label" for="q_{{ q.id }}_A">{{ q.option_a }}</label>
+          <input type="radio" id="q_{{ q.id }}_B" name="q_{{ q.id }}" value="B">
+          <label class="opt-label" for="q_{{ q.id }}_B">{{ q.option_b }}</label>
+          <input type="radio" id="q_{{ q.id }}_C" name="q_{{ q.id }}" value="C">
+          <label class="opt-label" for="q_{{ q.id }}_C">{{ q.option_c }}</label>
+          <input type="radio" id="q_{{ q.id }}_D" name="q_{{ q.id }}" value="D">
+          <label class="opt-label" for="q_{{ q.id }}_D">{{ q.option_d }}</label>
+        </div>
+      </div>
+      {% endfor %}
+    {% else %}
+      <div style="text-align:center;padding:40px;background:var(--white);border:1px dashed var(--border);border-radius:var(--radius-lg);margin-top:12px;">
+        <p style="color:var(--muted);">No final quiz questions have been added yet.</p>
+        <p style="color:var(--muted);font-size:13px;">Add standalone questions in Admin without assigning them to a module.</p>
+      </div>
+    {% endif %}
+
+    {% if questions %}
+    <div class="submit-area">
+      <button type="submit" class="btn btn-gold">
+        <i class="bi bi-send-fill"></i> Submit Final Quiz
+      </button>
+    </div>
+    {% endif %}
+  </form>
+  {% endif %}
+
+</div>
+
+<script>
+  const total = document.querySelectorAll('.q-card').length;
+  const progress = document.getElementById('prog');
+  const answered = new Set();
+
+  document.querySelectorAll('input[type="radio"]').forEach((radio) => {
+    radio.addEventListener('change', () => {
+      answered.add(radio.name);
+      if (progress && total > 0) {
+        progress.style.width = (answered.size / total * 100) + '%';
+      }
+    });
+  });
+</script>
+{% endblock %}

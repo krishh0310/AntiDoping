@@ -1,0 +1,219 @@
+{% extends "base.html" %}
+{% block title %}Updates & News – CleanSport{% endblock %}
+
+{% block extra_head %}
+<style>
+  .updates-header {
+    display: flex;
+    align-items: flex-end;
+    justify-content: space-between;
+    gap: 24px;
+    margin-bottom: 36px;
+    flex-wrap: wrap;
+  }
+  .updates-header h1 {
+    font-family: var(--ff-head);
+    font-weight: 800;
+    font-size: clamp(28px,4vw,42px);
+    letter-spacing: -.5px;
+  }
+  .updates-header p { color: var(--muted); font-size: 15.5px; margin-top: 8px; }
+
+  .pinned-banner {
+    background: linear-gradient(135deg, var(--ink) 0%, var(--ink-3) 100%);
+    border-radius: var(--radius-lg);
+    padding: 24px 28px;
+    display: flex;
+    align-items: center;
+    gap: 18px;
+    margin-bottom: 28px;
+    color: var(--white);
+  }
+  .pin-icon {
+    width: 48px; height: 48px;
+    background: rgba(232,164,0,.2);
+    border-radius: 12px;
+    display: grid;
+    place-items: center;
+    font-size: 22px;
+    color: var(--gold);
+    flex-shrink: 0;
+  }
+  .pin-title { font-family: var(--ff-head); font-weight: 700; font-size: 15px; color: var(--white); margin-bottom: 4px; }
+  .pin-desc { color: rgba(255,255,255,.6); font-size: 13.5px; }
+
+  .live-badge {
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    background: #fee2e2;
+    color: #b91c1c;
+    font-size: 12px;
+    font-weight: 700;
+    padding: 4px 10px;
+    border-radius: 99px;
+    text-transform: uppercase;
+    letter-spacing: .5px;
+  }
+  .live-dot {
+    width: 7px; height: 7px;
+    background: #ef4444;
+    border-radius: 50%;
+    animation: pulse 1.2s infinite;
+  }
+  @keyframes pulse {
+    0%, 100% { opacity: 1; transform: scale(1); }
+    50%       { opacity: .4; transform: scale(.7); }
+  }
+
+  .updates-list { display: flex; flex-direction: column; gap: 14px; }
+
+  .update-card {
+    background: var(--white);
+    border: 1.5px solid var(--border);
+    border-radius: var(--radius-lg);
+    padding: 22px 24px;
+    display: flex;
+    gap: 18px;
+    align-items: flex-start;
+    transition: border-color .2s, transform .2s, box-shadow .2s;
+  }
+  .update-card:hover {
+    border-color: var(--gold);
+    transform: translateX(4px);
+    box-shadow: var(--shadow);
+  }
+
+  .update-icon {
+    width: 42px; height: 42px;
+    border-radius: 11px;
+    display: grid;
+    place-items: center;
+    font-size: 19px;
+    flex-shrink: 0;
+  }
+  .icon-red   { background: #fee2e2; color: #b91c1c; }
+  .icon-blue  { background: var(--blue-lt); color: var(--blue); }
+  .icon-green { background: var(--green-lt); color: var(--green); }
+  .icon-gold  { background: var(--gold-lt); color: #9a6700; }
+
+  .update-title {
+    font-family: var(--ff-head);
+    font-weight: 700;
+    font-size: 15.5px;
+    color: var(--ink);
+    margin-bottom: 6px;
+    line-height: 1.35;
+  }
+  .update-message { color: var(--muted); font-size: 13.5px; line-height: 1.65; }
+  .update-footer { display: flex; align-items: center; gap: 10px; margin-top: 12px; flex-wrap: wrap; }
+  .update-tag {
+    font-size: 11.5px; font-weight: 700;
+    text-transform: uppercase; letter-spacing: .5px;
+    padding: 3px 8px; border-radius: 5px;
+    background: var(--gold-lt); color: #9a6700;
+  }
+  .update-date { color: var(--muted); font-size: 12px; display: flex; align-items: center; gap: 4px; }
+
+  .last-updated {
+    text-align: center;
+    color: var(--muted);
+    font-size: 12.5px;
+    margin-top: 24px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+  }
+
+  #countdown { font-weight: 700; color: var(--ink); }
+
+  .bc { display:flex; align-items:center; gap:6px; font-size:13px; color:var(--muted); margin-bottom:28px; }
+  .bc a { color:var(--muted); }
+  .bc a:hover { color:var(--ink); }
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="bc">
+  <a href="/"><i class="bi bi-house"></i> Home</a>
+  <span style="color:var(--border);">/</span>
+  <span style="color:var(--ink);font-weight:600;">Updates</span>
+</div>
+
+<div class="updates-header">
+  <div>
+    <h1>Updates & News</h1>
+    <p>Latest announcements, rule changes, and anti-doping awareness content.</p>
+  </div>
+  <span class="live-badge">
+    <span class="live-dot"></span> Live
+  </span>
+</div>
+
+<div class="pinned-banner">
+  <div class="pin-icon"><i class="bi bi-pin-fill"></i></div>
+  <div>
+    <div class="pin-title">Stay Informed</div>
+    <div class="pin-desc">WADA updates the Prohibited List every year. Always verify substances before use with a qualified medical professional.</div>
+  </div>
+</div>
+
+<div class="updates-list" id="updates-list">
+  {% for update in updates %}
+  <div class="update-card">
+    {% if forloop.counter == 1 %}
+      <div class="update-icon icon-red"><i class="bi bi-megaphone-fill"></i></div>
+    {% elif forloop.counter == 2 %}
+      <div class="update-icon icon-blue"><i class="bi bi-info-circle-fill"></i></div>
+    {% elif forloop.counter == 3 %}
+      <div class="update-icon icon-green"><i class="bi bi-shield-check-fill"></i></div>
+    {% else %}
+      <div class="update-icon icon-gold"><i class="bi bi-star-fill"></i></div>
+    {% endif %}
+
+    <div style="flex:1;">
+      <div class="update-title">{{ update.title }}</div>
+      <div class="update-message">{{ update.message }}</div>
+      <div class="update-footer">
+        <span class="update-tag">Anti-Doping</span>
+        {% if update.created_at %}
+        <span class="update-date">
+          <i class="bi bi-calendar3"></i>
+          {{ update.created_at|date:"M j, Y" }}
+        </span>
+        {% endif %}
+      </div>
+    </div>
+  </div>
+  {% empty %}
+  <div style="text-align:center; padding:60px 24px; background:var(--white); border:1px dashed var(--border); border-radius:var(--radius-xl);">
+    <div style="font-size:48px; color:var(--border); margin-bottom:14px;"><i class="bi bi-megaphone"></i></div>
+    <p style="color:var(--muted);">No updates yet. Check back soon.</p>
+  </div>
+  {% endfor %}
+</div>
+
+<div class="last-updated">
+  <i class="bi bi-arrow-clockwise"></i>
+  Auto-refreshes in <span id="countdown">30</span>s
+</div>
+
+{% endblock %}
+
+{% block extra_scripts %}
+<script>
+  // Auto-refresh every 30 seconds to show new updates from admin
+  let seconds = 30;
+  const countEl = document.getElementById('countdown');
+
+  setInterval(() => {
+    seconds--;
+    if (countEl) countEl.textContent = seconds;
+    if (seconds <= 0) {
+      location.reload();
+    }
+  }, 1000);
+</script>
+{% endblock %}

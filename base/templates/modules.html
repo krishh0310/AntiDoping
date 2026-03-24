@@ -1,0 +1,133 @@
+{% extends "base.html" %}
+{% block title %}Modules – Anti-Doping{% endblock %}
+
+{% block extra_head %}
+<style>
+.course-header { margin-bottom: 32px; }
+.course-header h1 { font-family:var(--ff-head);font-weight:800;font-size:clamp(28px,4vw,40px);letter-spacing:-.5px; }
+.course-header p  { color:var(--muted);margin-top:8px;font-size:15px; }
+
+.progress-section {
+  background:var(--white);border:1.5px solid var(--border);
+  border-radius:var(--radius-lg);padding:22px 24px;
+  margin-bottom:28px;display:flex;align-items:center;gap:20px;flex-wrap:wrap;
+}
+.prog-bar-wrap { flex:1;background:var(--border);border-radius:99px;height:8px;min-width:200px; }
+.prog-bar-fill { height:100%;background:linear-gradient(90deg,var(--gold),#f0c040);border-radius:99px;transition:width .4s;width:var(--progress-width); }
+.prog-label { font-family:var(--ff-head);font-weight:800;font-size:22px;color:var(--gold);flex-shrink:0; }
+
+.module-list { display:flex;flex-direction:column;gap:14px; }
+
+.module-row {
+  background:var(--white);border:1.5px solid var(--border);
+  border-radius:var(--radius-lg);padding:22px 24px;
+  display:flex;align-items:center;gap:18px;
+  transition:border-color .2s,transform .2s,box-shadow .2s;
+  text-decoration:none;color:var(--ink);
+}
+.module-row:hover,
+.module-row:focus { 
+  border-color:var(--gold);
+  transform:translateX(4px);
+  box-shadow:var(--shadow);
+  outline:none;
+}
+.module-row.locked { opacity:.6;pointer-events:none;cursor:not-allowed; }
+
+.mod-num {
+  width:44px;height:44px;border-radius:12px;
+  background:var(--ink);color:white;
+  display:grid;place-items:center;
+  font-family:var(--ff-head);font-weight:800;font-size:16px;flex-shrink:0;
+}
+.mod-num.done   { background:var(--green); }
+.mod-num.locked-num { background:var(--border);color:var(--muted); }
+
+.mod-info { flex:1; }
+.mod-title { font-family:var(--ff-head);font-weight:700;font-size:16px;margin-bottom:4px; }
+.mod-desc  { color:var(--muted);font-size:13.5px; }
+
+.mod-status {
+  font-size:12px;font-weight:700;padding:5px 12px;
+  border-radius:99px;flex-shrink:0;
+}
+.status-done   { background:var(--green-lt);color:#065f46; }
+.status-start  { background:var(--gold-lt);color:#9a6700; }
+.status-locked { background:var(--border);color:var(--muted); }
+
+@media (max-width: 768px) {
+  .progress-section { flex-direction: column; gap: 16px; }
+  .prog-bar-wrap { min-width: 100%; }
+  .module-row { padding: 18px 16px; gap: 14px; }
+  .mod-num { width: 40px; height: 40px; font-size: 14px; }
+  .mod-title { font-size: 15px; }
+  .mod-status { font-size: 11px; padding: 4px 10px; }
+}
+</style>
+{% endblock %}
+
+{% block content %}
+
+<div class="course-header">
+  <h1>Learning Modules</h1>
+  <p>Read each module then pass the quiz to unlock the next one.</p>
+</div>
+
+<div class="progress-section">
+  <div>
+    <div style="font-weight:700;font-size:14px;margin-bottom:4px;">Your Progress</div>
+    <div style="color:var(--muted);font-size:13px;">{{ passed_modules|length }} of {{ modules|length }} modules completed</div>
+  </div>
+  <div class="prog-bar-wrap">
+    {% if modules|length %}
+      {% widthratio passed_modules|length modules|length 100 as pct %}
+      <div class="prog-bar-fill" style="--progress-width: {{ pct }}%;"></div>
+    {% else %}
+      <div class="prog-bar-fill" style="--progress-width: 0%;"></div>
+    {% endif %}
+  </div>
+  <div class="prog-label">
+    {% if modules|length %}
+      {% widthratio passed_modules|length modules|length 100 %}%
+    {% else %}
+      0%
+    {% endif %}
+  </div>
+</div>
+
+<div class="module-list">
+  {% for module in modules %}
+    {% if module.id in passed_modules %}
+      <a href="/module/{{ module.id }}/" class="module-row">
+        <div class="mod-num done" aria-hidden="true"><i class="bi bi-check-lg"></i></div>
+        <div class="mod-info">
+          <div class="mod-title">{{ module.title }}</div>
+          <div class="mod-desc">Completed ✅</div>
+        </div>
+        <span class="mod-status status-done">Done</span>
+      </a>
+
+    {% elif forloop.counter0 == passed_modules|length %}
+      <a href="/module/{{ module.id }}/" class="module-row">
+        <div class="mod-num">{{ forloop.counter }}</div>
+        <div class="mod-info">
+          <div class="mod-title">{{ module.title }}</div>
+          <div class="mod-desc">Click to start this module</div>
+        </div>
+        <span class="mod-status status-start">Start →</span>
+      </a>
+
+    {% else %}
+      <div class="module-row locked">
+        <div class="mod-num locked-num" aria-hidden="true"><i class="bi bi-lock-fill"></i></div>
+        <div class="mod-info">
+          <div class="mod-title">{{ module.title }}</div>
+          <div class="mod-desc">Complete previous module to unlock</div>
+        </div>
+        <span class="mod-status status-locked">🔒 Locked</span>
+      </div>
+    {% endif %}
+  {% endfor %}
+</div>
+
+{% endblock %}

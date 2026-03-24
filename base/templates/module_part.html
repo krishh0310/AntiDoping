@@ -1,0 +1,230 @@
+{% extends "base.html" %}
+{% block title %}{{ module.title }} – Part {{ part.order }}{% endblock %}
+
+{% block extra_head %}
+<style>
+.part-wrap { max-width: 780px; margin: 0 auto; }
+
+/* Top progress */
+.course-progress {
+  background: var(--white);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 16px 22px;
+  margin-bottom: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+  flex-wrap: wrap;
+}
+.course-progress-left { font-size: 13.5px; }
+.course-progress-left strong { font-family: var(--ff-head); font-weight: 700; }
+.course-progress-left span  { color: var(--muted); font-size: 12.5px; display: block; margin-top: 2px; }
+
+/* Module steps dots */
+.module-dots { display: flex; align-items: center; gap: 5px; }
+.module-dot {
+  width: 26px; height: 6px;
+  border-radius: 99px;
+  background: var(--border);
+}
+.module-dot.done   { background: var(--green); }
+.module-dot.active { background: var(--gold); }
+
+/* Part steps */
+.part-steps {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+}
+.part-step {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: 12.5px;
+  color: var(--muted);
+  font-weight: 500;
+}
+.part-step-num {
+  width: 26px; height: 26px;
+  border-radius: 99px;
+  background: var(--border);
+  color: var(--muted);
+  display: grid;
+  place-items: center;
+  font-family: var(--ff-head);
+  font-weight: 800;
+  font-size: 11px;
+}
+.part-step.active .part-step-num { background: var(--gold); color: var(--ink); }
+.part-step.done   .part-step-num { background: var(--green); color: white; }
+.part-step.active { color: var(--ink); }
+
+.part-step-arrow { color: var(--border); font-size: 12px; }
+.quiz-step-num {
+  width: 26px; height: 26px;
+  border-radius: 99px;
+  background: var(--border);
+  color: var(--muted);
+  display: grid;
+  place-items: center;
+  font-size: 13px;
+}
+
+/* Header */
+.part-header { margin-bottom: 22px; }
+.part-badge {
+  display: inline-flex; align-items: center; gap: 6px;
+  background: var(--gold-lt); color: #9a6700;
+  font-size: 12px; font-weight: 700;
+  padding: 5px 12px; border-radius: 99px; margin-bottom: 10px;
+}
+.part-header h1 {
+  font-family: var(--ff-head); font-weight: 800;
+  font-size: clamp(22px, 3.5vw, 32px); letter-spacing: -.4px;
+}
+.part-header .part-title {
+  color: var(--muted); font-size: 15px; margin-top: 4px;
+}
+
+/* Content */
+.content-card {
+  background: var(--white);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 36px;
+  font-size: 15.5px;
+  line-height: 1.85;
+  color: var(--ink-3);
+  margin-bottom: 28px;
+  white-space: pre-wrap;
+}
+
+/* Nav bar */
+.nav-bar {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  background: var(--white);
+  border: 1.5px solid var(--border);
+  border-radius: var(--radius-lg);
+  padding: 18px 22px;
+}
+.nav-bar-center {
+  font-size: 13px;
+  color: var(--muted);
+  font-weight: 600;
+  text-align: center;
+}
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="part-wrap">
+
+  <!-- Breadcrumb -->
+  <div style="display:flex;align-items:center;gap:6px;font-size:13px;color:var(--muted);margin-bottom:20px;">
+    <a href="/" style="color:var(--muted);"><i class="bi bi-house"></i> Home</a>
+    <span>/</span>
+    <a href="/modules/" style="color:var(--muted);">Modules</a>
+    <span>/</span>
+    <a href="/module/{{ module.id }}/" style="color:var(--muted);">{{ module.title }}</a>
+    <span>/</span>
+    <span style="color:var(--ink);font-weight:600;">Part {{ part.order }}</span>
+  </div>
+
+  <!-- Course progress -->
+  <div class="course-progress">
+    <div class="course-progress-left">
+      <strong>Module {{ module.order }} of {{ total_modules }}: {{ module.title }}</strong>
+      <span>Part {{ part.order }} of {{ parts|length }}</span>
+    </div>
+    <div class="module-dots">
+      {% for m in all_modules %}
+        {% if m.id in passed_modules %}
+          <div class="module-dot done"></div>
+        {% elif m.id == module.id %}
+          <div class="module-dot active"></div>
+        {% else %}
+          <div class="module-dot"></div>
+        {% endif %}
+      {% endfor %}
+    </div>
+  </div>
+
+  <!-- Part steps (Part 1 → Part 2 → Part 3 → Quiz) -->
+  <div class="part-steps">
+    {% for p in parts %}
+      <div class="part-step {% if p.order == part.order %}active{% elif p.order < part.order %}done{% endif %}">
+        <div class="part-step-num">
+          {% if p.order < part.order %}
+            <i class="bi bi-check"></i>
+          {% else %}
+            {{ p.order }}
+          {% endif %}
+        </div>
+        Part {{ p.order }}
+      </div>
+      <span class="part-step-arrow"><i class="bi bi-chevron-right"></i></span>
+    {% endfor %}
+    <!-- Quiz step -->
+    <div class="part-step">
+      <div class="quiz-step-num"><i class="bi bi-pencil-square"></i></div>
+      Quiz
+    </div>
+  </div>
+
+  <!-- Part header -->
+  <div class="part-header">
+    <div class="part-badge">
+      <i class="bi bi-bookmark-fill"></i> Part {{ part.order }}
+    </div>
+    <h1>{{ module.title }}</h1>
+    <div class="part-title">{{ part.title }}</div>
+  </div>
+
+  <!-- Content -->
+  <div class="content-card">{{ part.content }}</div>
+
+  <!-- Navigation -->
+  <div class="nav-bar">
+
+    <!-- Left: Previous -->
+    {% if prev_part %}
+      <a href="/module/{{ module.id }}/part/{{ prev_part.order }}/" class="btn btn-outline">
+        <i class="bi bi-arrow-left"></i> Previous
+      </a>
+    {% elif prev_module %}
+      <a href="/module/{{ prev_module.id }}/" class="btn btn-outline">
+        <i class="bi bi-arrow-left"></i> Previous Module
+      </a>
+    {% else %}
+      <a href="/modules/" class="btn btn-outline">
+        <i class="bi bi-grid"></i> All Modules
+      </a>
+    {% endif %}
+
+    <!-- Center -->
+    <div class="nav-bar-center">
+      Part {{ part.order }} of {{ parts|length }}
+    </div>
+
+    <!-- Right: Next -->
+    {% if next_part %}
+      <a href="/module/{{ module.id }}/part/{{ next_part.order }}/" class="btn btn-gold">
+        Next <i class="bi bi-arrow-right"></i>
+      </a>
+    {% else %}
+      <a href="/module/{{ module.id }}/quiz/" class="btn btn-gold">
+        Take Quiz <i class="bi bi-pencil-square"></i>
+      </a>
+    {% endif %}
+
+  </div>
+
+</div>
+{% endblock %}

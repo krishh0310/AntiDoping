@@ -1,0 +1,172 @@
+{% extends "base.html" %}
+{% block title %}Certificate – Anti-Doping{% endblock %}
+
+{% block extra_head %}
+<style>
+.cert-wrap { max-width: 860px; margin: 0 auto; }
+.cert-doc {
+  background: var(--white);
+  border: 2.5px solid var(--ink);
+  border-radius: var(--radius-xl);
+  overflow: hidden;
+  box-shadow: var(--shadow-lg);
+  margin-bottom: 20px;
+}
+.cert-topbar {
+  background: var(--ink);
+  padding: 16px 32px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  color: white;
+}
+.cert-brand { display:flex;align-items:center;gap:9px;font-family:var(--ff-head);font-weight:800;font-size:15px; }
+.cert-brand-badge { width:32px;height:32px;background:var(--gold);border-radius:8px;display:grid;place-items:center;color:var(--ink);font-size:16px; }
+.cert-topright { font-size:11.5px;color:rgba(255,255,255,.45);text-transform:uppercase;letter-spacing:1px; }
+.cert-stripe { background:linear-gradient(90deg,var(--gold),#f5d060,var(--gold));height:5px; }
+.cert-body {
+  padding: 44px 56px 36px;
+  text-align: center;
+  position: relative;
+}
+.cert-body::before {
+  content:'';position:absolute;inset:18px;
+  border:1.5px solid rgba(232,164,0,.2);border-radius:12px;pointer-events:none;
+}
+.cert-medal { font-size:44px;margin-bottom:6px;line-height:1; }
+.cert-sub { font-size:11.5px;font-weight:700;text-transform:uppercase;letter-spacing:3px;color:var(--muted);margin-bottom:14px; }
+.cert-main { font-family:var(--ff-head);font-size:clamp(20px,3vw,30px);font-weight:900;letter-spacing:-.3px;margin-bottom:20px; }
+.cert-presented { font-size:14px;color:var(--muted);margin-bottom:8px; }
+.cert-name {
+  font-family:var(--ff-head);font-size:clamp(26px,4vw,44px);font-weight:800;
+  letter-spacing:-.5px;color:var(--ink);margin-bottom:14px;
+  border-bottom:3px solid var(--gold);display:inline-block;padding-bottom:6px;
+}
+.cert-desc { color:var(--muted);font-size:14px;line-height:1.7;max-width:480px;margin:0 auto 22px; }
+.cert-scores { display:flex;gap:14px;justify-content:center;margin-bottom:22px;flex-wrap:wrap; }
+.score-box { background:var(--surface);border:1px solid var(--border);border-radius:var(--radius);padding:14px 22px;min-width:110px; }
+.score-val { font-family:var(--ff-head);font-size:26px;font-weight:900;color:var(--ink);line-height:1; }
+.score-val.gold { color:var(--gold); }
+.score-lbl { font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.5px;margin-top:3px; }
+.passed-stamp {
+  display:inline-flex;align-items:center;gap:7px;
+  background:var(--green-lt);border:1.5px solid var(--green);color:var(--green);
+  font-family:var(--ff-head);font-weight:800;font-size:14px;
+  padding:8px 20px;border-radius:99px;margin-bottom:22px;
+}
+.cert-sigs { display:flex;justify-content:space-around;margin-top:28px;padding-top:20px;border-top:1px solid var(--border);flex-wrap:wrap;gap:16px; }
+.sig-line { width:120px;height:1px;background:var(--ink-3);margin:0 auto 5px; }
+.sig-name { font-weight:700;font-size:13px;color:var(--ink); }
+.sig-role { font-size:11.5px;color:var(--muted); }
+.cert-foot { background:var(--surface);border-top:1px solid var(--border);padding:12px 32px;display:flex;align-items:center;justify-content:space-between;font-size:12px;color:var(--muted);flex-wrap:wrap;gap:6px; }
+.cert-actions { display:flex;gap:10px;flex-wrap:wrap;justify-content:center; }
+.fail-card { background:var(--white);border:1.5px solid var(--red);border-radius:var(--radius-xl);padding:48px 32px;text-align:center; }
+@media print { .navbar, footer, .cert-actions { display:none !important; } .main { padding:0 !important; } }
+@media(max-width:600px){ .cert-body{padding:32px 20px 28px;} }
+</style>
+{% endblock %}
+
+{% block content %}
+<div class="cert-wrap">
+
+  {% if passed %}
+    <div class="cert-doc">
+      <div class="cert-topbar">
+        <div class="cert-brand">
+          <div class="cert-brand-badge"><i class="bi bi-shield-check"></i></div>
+          Anti-Doping Awareness
+        </div>
+        <div class="cert-topright">Certificate of Completion</div>
+      </div>
+
+      <div class="cert-stripe"></div>
+
+      <div class="cert-body">
+        <div class="cert-medal">🏅</div>
+        <div class="cert-sub">Certificate of Achievement</div>
+        <div class="cert-main">Anti-Doping Awareness Program</div>
+        <div class="cert-presented">This certificate is proudly presented to</div>
+        <div class="cert-name">{{ result.student_name|default:"Participant" }}</div>
+        <p class="cert-desc">
+          For successfully completing the Anti-Doping Awareness Quiz and demonstrating
+          knowledge of clean sport principles, WADA regulations, and athlete safety.
+        </p>
+        <div class="cert-scores">
+          <div class="score-box">
+            <div class="score-val">{{ result.score }}/{{ result.total }}</div>
+            <div class="score-lbl">Score</div>
+          </div>
+          <div class="score-box">
+            <div class="score-val gold">{{ percentage }}%</div>
+            <div class="score-lbl">Percentage</div>
+          </div>
+          <div class="score-box">
+            <div class="score-val" style="font-size:20px;">{{ result.created_at|date:"Y" }}</div>
+            <div class="score-lbl">Year</div>
+          </div>
+        </div>
+        <div class="passed-stamp">
+          <i class="bi bi-patch-check-fill"></i> Successfully Completed
+        </div>
+        <div class="cert-sigs">
+          <div>
+            <div class="sig-line"></div>
+            <div class="sig-name">Platform Director</div>
+            <div class="sig-role">Anti-Doping Initiative</div>
+          </div>
+          <div>
+            <div class="sig-line"></div>
+            <div class="sig-name">Education Head</div>
+            <div class="sig-role">Awareness Program</div>
+          </div>
+          <div>
+            <div class="sig-line"></div>
+            <div class="sig-name">Certification Authority</div>
+            <div class="sig-role">Awareness Division</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="cert-foot">
+        <span><i class="bi bi-shield-check"></i> Anti-Doping Awareness Platform</span>
+        <span>Certificate ID: CS-{{ result.id }}-{{ result.created_at|date:"Y" }}</span>
+      </div>
+    </div>
+
+    <div class="cert-actions">
+      <button class="btn btn-dark" onclick="window.print()">
+        <i class="bi bi-printer"></i> Print / Save PDF
+      </button>
+      <a href="/quiz/" class="btn btn-outline">
+        <i class="bi bi-arrow-repeat"></i> Retake Quiz
+      </a>
+      <a href="/" class="btn btn-outline">
+        <i class="bi bi-house"></i> Home
+      </a>
+    </div>
+
+  {% else %}
+    <div class="fail-card">
+      <div style="font-size:52px;color:var(--red);margin-bottom:14px;">
+        <i class="bi bi-emoji-frown"></i>
+      </div>
+      <h2 style="font-family:var(--ff-head);font-weight:800;font-size:24px;margin-bottom:10px;">
+        Almost There!
+      </h2>
+      <p style="color:var(--muted);font-size:15px;margin-bottom:22px;">
+        You scored <strong>{{ result.score }}/{{ result.total }}</strong> ({{ percentage }}%).
+        Need at least <strong>60%</strong> to pass.
+      </p>
+      <div style="display:flex;gap:10px;justify-content:center;flex-wrap:wrap;">
+        <a href="/modules/" class="btn btn-dark">
+          <i class="bi bi-book"></i> Review Modules
+        </a>
+        <a href="/quiz/" class="btn btn-gold">
+          <i class="bi bi-arrow-repeat"></i> Try Again
+        </a>
+      </div>
+    </div>
+  {% endif %}
+
+</div>
+{% endblock %}
