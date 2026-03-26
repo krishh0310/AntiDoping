@@ -1,129 +1,77 @@
 {% extends "base.html" %}
-{% block title %}Updates & News – CleanSport{% endblock %}
+
+{% block title %}Updates — Anti-Doping{% endblock %}
 
 {% block extra_head %}
 <style>
   .updates-header {
-    display: flex;
-    align-items: flex-end;
-    justify-content: space-between;
-    gap: 24px;
-    margin-bottom: 36px;
-    flex-wrap: wrap;
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 24px;
   }
-  .updates-header h1 {
-    font-family: var(--ff-head);
-    font-weight: 800;
-    font-size: clamp(28px,4vw,42px);
-    letter-spacing: -.5px;
-  }
-  .updates-header p { color: var(--muted); font-size: 15.5px; margin-top: 8px; }
-
-  .pinned-banner {
-    background: linear-gradient(135deg, var(--ink) 0%, var(--ink-3) 100%);
-    border-radius: var(--radius-lg);
-    padding: 24px 28px;
-    display: flex;
-    align-items: center;
-    gap: 18px;
-    margin-bottom: 28px;
-    color: var(--white);
-  }
-  .pin-icon {
-    width: 48px; height: 48px;
-    background: rgba(232,164,0,.2);
-    border-radius: 12px;
-    display: grid;
-    place-items: center;
-    font-size: 22px;
-    color: var(--gold);
-    flex-shrink: 0;
-  }
-  .pin-title { font-family: var(--ff-head); font-weight: 700; font-size: 15px; color: var(--white); margin-bottom: 4px; }
-  .pin-desc { color: rgba(255,255,255,.6); font-size: 13.5px; }
-
   .live-badge {
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
-    background: #fee2e2;
-    color: #b91c1c;
-    font-size: 12px;
-    font-weight: 700;
-    padding: 4px 10px;
-    border-radius: 99px;
-    text-transform: uppercase;
-    letter-spacing: .5px;
+    display: inline-flex; align-items: center; gap: 6px;
+    background: var(--red-lt); color: var(--red);
+    font-size: 13px; font-weight: 600;
+    padding: 6px 14px; border-radius: 20px;
   }
   .live-dot {
-    width: 7px; height: 7px;
-    background: #ef4444;
-    border-radius: 50%;
-    animation: pulse 1.2s infinite;
+    width: 8px; height: 8px;
+    background: var(--red); border-radius: 50%;
+    animation: pulse 1.4s infinite;
   }
   @keyframes pulse {
     0%, 100% { opacity: 1; transform: scale(1); }
-    50%       { opacity: .4; transform: scale(.7); }
+    50% { opacity: .4; transform: scale(.8); }
   }
+
+  .pinned-banner {
+    background: linear-gradient(135deg, var(--ink) 0%, var(--ink-3) 100%);
+    color: #fff; padding: 20px 24px;
+    border-radius: var(--radius-lg);
+    display: flex; align-items: flex-start; gap: 16px;
+    margin-bottom: 24px;
+  }
+  .pin-icon { font-size: 22px; color: var(--gold); margin-top: 2px; }
+  .pin-title { font-weight: 700; font-size: 16px; margin-bottom: 4px; }
+  .pin-desc { font-size: 14px; opacity: .8; line-height: 1.5; }
 
   .updates-list { display: flex; flex-direction: column; gap: 14px; }
 
   .update-card {
     background: var(--white);
-    border: 1.5px solid var(--border);
+    border: 1px solid var(--border);
     border-radius: var(--radius-lg);
-    padding: 22px 24px;
-    display: flex;
-    gap: 18px;
-    align-items: flex-start;
-    transition: border-color .2s, transform .2s, box-shadow .2s;
+    padding: 20px 22px;
+    display: flex; gap: 16px; align-items: flex-start;
+    transition: .2s;
   }
-  .update-card:hover {
-    border-color: var(--gold);
-    transform: translateX(4px);
-    box-shadow: var(--shadow);
-  }
+  .update-card:hover { box-shadow: var(--shadow); }
 
   .update-icon {
-    width: 42px; height: 42px;
-    border-radius: 11px;
-    display: grid;
-    place-items: center;
-    font-size: 19px;
-    flex-shrink: 0;
+    width: 44px; height: 44px;
+    border-radius: 12px;
+    display: flex; align-items: center; justify-content: center;
+    font-size: 20px; flex-shrink: 0;
   }
-  .icon-red   { background: #fee2e2; color: #b91c1c; }
-  .icon-blue  { background: var(--blue-lt); color: var(--blue); }
-  .icon-green { background: var(--green-lt); color: var(--green); }
-  .icon-gold  { background: var(--gold-lt); color: #9a6700; }
+  .icon-red  { background: var(--red-lt);  color: var(--red);  }
+  .icon-blue { background: var(--blue-lt); color: var(--blue); }
+  .icon-green{ background: var(--green-lt);color: var(--green);}
+  .icon-gold { background: var(--gold-lt); color: var(--gold); }
 
-  .update-title {
-    font-family: var(--ff-head);
-    font-weight: 700;
-    font-size: 15.5px;
-    color: var(--ink);
-    margin-bottom: 6px;
-    line-height: 1.35;
-  }
-  .update-message { color: var(--muted); font-size: 13.5px; line-height: 1.65; }
-  .update-footer { display: flex; align-items: center; gap: 10px; margin-top: 12px; flex-wrap: wrap; }
+  .update-title { font-weight: 700; font-size: 15px; margin-bottom: 4px; }
+  .update-message { font-size: 14px; color: var(--muted); line-height: 1.5; margin-bottom: 10px; }
+
+  .update-footer { display: flex; align-items: center; gap: 12px; flex-wrap: wrap; }
+  .update-date { font-size: 12px; color: var(--muted); }
   .update-tag {
-    font-size: 11.5px; font-weight: 700;
-    text-transform: uppercase; letter-spacing: .5px;
-    padding: 3px 8px; border-radius: 5px;
-    background: var(--gold-lt); color: #9a6700;
+    font-size: 11px; font-weight: 600;
+    padding: 3px 10px; border-radius: 20px;
+    background: var(--gold-lt); color: var(--gold);
   }
-  .update-date { color: var(--muted); font-size: 12px; display: flex; align-items: center; gap: 4px; }
 
   .last-updated {
-    text-align: center;
-    color: var(--muted);
-    font-size: 12.5px;
-    margin-top: 24px;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 6px;
+    text-align: center; padding: 20px;
+    font-size: 13px; color: var(--muted);
   }
 
   #countdown { font-weight: 700; color: var(--ink); }
@@ -143,10 +91,7 @@
 </div>
 
 <div class="updates-header">
-  <div>
-    <h1>Updates & News</h1>
-    <p>Latest announcements, rule changes, and anti-doping awareness content.</p>
-  </div>
+  <div></div>
   <span class="live-badge">
     <span class="live-dot"></span> Live
   </span>
@@ -177,13 +122,7 @@
       <div class="update-title">{{ update.title }}</div>
       <div class="update-message">{{ update.message }}</div>
       <div class="update-footer">
-        <span class="update-tag">Anti-Doping</span>
-        {% if update.created_at %}
-        <span class="update-date">
-          <i class="bi bi-calendar3"></i>
-          {{ update.created_at|date:"M j, Y" }}
-        </span>
-        {% endif %}
+        <span class="update-date">{{ update.created_at|timesince }} ago</span>
       </div>
     </div>
   </div>
@@ -204,10 +143,8 @@
 
 {% block extra_scripts %}
 <script>
-  // Auto-refresh every 30 seconds to show new updates from admin
   let seconds = 30;
   const countEl = document.getElementById('countdown');
-
   setInterval(() => {
     seconds--;
     if (countEl) countEl.textContent = seconds;

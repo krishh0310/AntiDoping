@@ -1,79 +1,80 @@
 body{
-    font-family: Arial, sans-serif;
-    margin:0;
-    background:#f6f7fb;
-    color:#222;
-  }
-  
-  .container{
-    width: min(1100px, 92%);
-    margin: 0 auto;
-  }
-  
-  .header{
-    background:#111827;
-    color:#fff;
-    padding:14px 0;
-  }
-  
-  .header-row{
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    gap:16px;
-  }
-  
-  .logo{
-    margin:0;
-    font-size:18px;
-  }
-  
-  .nav a{
-    color:#fff;
-    text-decoration:none;
-    margin-left:12px;
-    font-size:14px;
-    opacity:0.9;
-  }
-  
-  .nav a:hover{
-    opacity:1;
-    text-decoration:underline;
-  }
-  
-  .main{
-    padding:22px 0 40px;
-  }
-  
-  .grid{
-    display:grid;
-    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
-    gap:14px;
-    margin-top:16px;
-  }
-  
-  .card{
-    background:#fff;
-    padding:16px;
-    border-radius:12px;
-    text-decoration:none;
-    color:#111;
-    border:1px solid #e5e7eb;
-  }
-  
-  .card:hover{
-    border-color:#9ca3af;
-  }
-  
-  .list{
-    background:#fff;
-    padding:16px 18px;
-    border-radius:12px;
-    border:1px solid #e5e7eb;
-  }
-  
-  .footer{
-    padding:18px 0;
-    background:#fff;
-    border-top:1px solid #e5e7eb;
-  }
+  font-family: 'DM Sans', Arial, sans-serif;
+  margin:0;
+  background:#faf6f0;
+  color:#0f2b26;
+}
+
+.container{
+  width: min(1100px, 92%);
+  margin: 0 auto;
+}
+
+.header{
+  background:#0f2b26;
+  color:#fff;
+  padding:14px 0;
+}
+
+.header-row{
+  display:flex;
+  align-items:center;
+  justify-content:space-between;
+  gap:16px;
+}
+
+.logo{
+  margin:0;
+  font-size:18px;
+}
+
+.nav a{
+  color:#fff;
+  text-decoration:none;
+  margin-left:12px;
+  font-size:14px;
+  opacity:0.9;
+}
+
+.nav a:hover{
+  opacity:1;
+  text-decoration:underline;
+}
+
+.main{
+  padding:22px 0 40px;
+}
+
+.grid{
+  display:grid;
+  grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+  gap:14px;
+  margin-top:16px;
+}
+
+.card{
+  background:#fff;
+  padding:16px;
+  border-radius:12px;
+  text-decoration:none;
+  color:#0f2b26;
+  border:1px solid #d6e4df;
+}
+
+.card:hover{
+  border-color:#1e5248;
+}
+
+.list{
+  background:#fff;
+  padding:16px 18px;
+  border-radius:12px;
+  border:1px solid #d6e4df;
+}
+
+.footer{
+  padding:18px 0;
+  background:#0f2b26;
+  border-top:1px solid #d6e4df;
+  color: rgba(255,255,255,.5);
+}

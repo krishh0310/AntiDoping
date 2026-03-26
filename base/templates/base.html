@@ -13,30 +13,30 @@
 
   <style>
     :root {
-      --ink:      #0a0e1a;
-      --ink-2:    #1c2235;
-      --ink-3:    #2e3a52;
-      --muted:    #6b7a99;
-      --border:   #e2e8f4;
-      --surface:  #f7f9fd;
+      --ink:      #0f2b26;
+      --ink-2:    #163d36;
+      --ink-3:    #1e5248;
+      --muted:    #6a8a82;
+      --border:   #d6e4df;
+      --surface:  #faf6f0;
       --white:    #ffffff;
-      --gold:     #e8a400;
-      --gold-lt:  #fff4d6;
+      --gold:     #d4890e;
+      --gold-lt:  #fef0d5;
       --green:    #0dab76;
       --green-lt: #d4f5e9;
-      --red:      #e53e3e;
-      --red-lt:   #fdecea;
-      --blue:     #2563eb;
-      --blue-lt:  #dbeafe;
+      --red:      #cf3a3a;
+      --red-lt:   #fce8e8;
+      --blue:     #1a73c7;
+      --blue-lt:  #d8eafc;
       --ff-head:  'Syne', sans-serif;
       --ff-body:  'DM Sans', sans-serif;
       --radius-sm: 8px;
       --radius:    14px;
       --radius-lg: 22px;
       --radius-xl: 32px;
-      --shadow-sm: 0 1px 4px rgba(10,14,26,.07);
-      --shadow:    0 4px 16px rgba(10,14,26,.10);
-      --shadow-lg: 0 12px 40px rgba(10,14,26,.13);
+      --shadow-sm: 0 1px 4px rgba(15,43,38,.07);
+      --shadow:    0 4px 16px rgba(15,43,38,.10);
+      --shadow-lg: 0 12px 40px rgba(15,43,38,.13);
     }
 
     *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
@@ -57,7 +57,7 @@
 
     /* NAVBAR */
     .navbar {
-      background: var(--ink);
+      background: linear-gradient(135deg, var(--ink) 0%, var(--ink-3) 100%);
       padding: 0 28px;
       display: flex;
       align-items: center;
@@ -66,7 +66,7 @@
       position: sticky;
       top: 0;
       z-index: 100;
-      box-shadow: 0 2px 12px rgba(0,0,0,.25);
+      box-shadow: 0 2px 12px rgba(15,43,38,.30);
     }
     .navbar-brand {
       display: flex;
@@ -147,7 +147,7 @@
 
     /* FOOTER */
     footer {
-      background: var(--ink);
+      background: linear-gradient(135deg, var(--ink) 0%, var(--ink-3) 100%);
       color: rgba(255,255,255,.5);
       text-align: center;
       padding: 20px 24px;

@@ -12,10 +12,10 @@
             <div class="avatar bot-avatar">🤖</div>
             <div class="msg-content">
                 <div class="msg-bubble bot-bubble">
-                    Hi! I’m your Anti-Doping Assistant. Ask me anything.
+                    Hi! I'm your Anti-Doping Assistant. Ask me anything.
                 </div>
                 <div class="msg-actions">
-                    <button class="copy-btn" onclick="copyText(this)" data-copy="Hi! I’m your Anti-Doping Assistant. Ask me anything.">Copy</button>
+                    <button class="copy-btn" onclick="copyText(this)" data-copy="Hi! I'm your Anti-Doping Assistant. Ask me anything.">Copy</button>
                 </div>
             </div>
         </div>
@@ -50,23 +50,23 @@
     font-size: 2.2rem;
     font-weight: 700;
     margin-bottom: 6px;
-    color: #1f2937;
+    color: var(--ink);
 }
 
 .chatgpt-header p{
-    color: #6b7280;
+    color: var(--muted);
     margin: 0;
     font-size: 1rem;
 }
 
 .chatgpt-box{
-    background: #ffffff;
-    border: 1px solid #e5e7eb;
+    background: var(--white);
+    border: 1px solid var(--border);
     border-radius: 18px;
     height: 560px;
     overflow-y: auto;
     padding: 22px 18px;
-    box-shadow: 0 8px 24px rgba(0,0,0,0.05);
+    box-shadow: var(--shadow);
     scroll-behavior: smooth;
 }
 
@@ -96,13 +96,13 @@
 }
 
 .bot-avatar{
-    background: #111827;
+    background: var(--ink);
     color: white;
     margin-right: 10px;
 }
 
 .user-avatar{
-    background: #2563eb;
+    background: var(--ink-3);
     color: white;
     margin-left: 10px;
     order: 2;
@@ -128,13 +128,13 @@
 }
 
 .bot-bubble{
-    background: #f3f4f6;
-    color: #111827;
+    background: var(--surface);
+    color: var(--ink);
     border-top-left-radius: 6px;
 }
 
 .user-bubble{
-    background: #111827;
+    background: var(--ink);
     color: #ffffff;
     border-top-right-radius: 6px;
 }
@@ -146,14 +146,14 @@
 .copy-btn{
     border: none;
     background: transparent;
-    color: #6b7280;
+    color: var(--muted);
     font-size: 12px;
     cursor: pointer;
     padding: 0;
 }
 
 .copy-btn:hover{
-    color: #111827;
+    color: var(--ink);
     text-decoration: underline;
 }
 
@@ -169,20 +169,20 @@
     flex: 1;
     padding: 14px 16px;
     border-radius: 14px;
-    border: 1px solid #d1d5db;
+    border: 1px solid var(--border);
     font-size: 15px;
     outline: none;
-    background: #ffffff;
+    background: var(--white);
 }
 
 .chatgpt-inputbar input:focus{
-    border-color: #2563eb;
-    box-shadow: 0 0 0 3px rgba(37,99,235,0.12);
+    border-color: var(--gold);
+    box-shadow: 0 0 0 3px rgba(212,137,14,0.12);
 }
 
 .chatgpt-inputbar button{
     border: none;
-    background: #111827;
+    background: var(--ink);
     color: white;
     border-radius: 14px;
     padding: 0 22px;
@@ -191,12 +191,12 @@
 }
 
 .chatgpt-inputbar button:hover{
-    background: #000000;
+    background: var(--ink-3);
 }
 
 .chatgpt-tip{
     margin-top: 8px;
-    color: #6b7280;
+    color: var(--muted);
     font-size: 13px;
 }
 
@@ -211,7 +211,7 @@
     width: 8px;
     height: 8px;
     border-radius: 50%;
-    background: #6b7280;
+    background: var(--muted);
     animation: bounce 1.2s infinite ease-in-out;
 }
 
@@ -275,6 +275,14 @@ function escapeHtml(text) {
     return div.innerHTML;
 }
 
+function escapeAttribute(text) {
+    return String(text)
+        .replace(/&/g, "&amp;")
+        .replace(/"/g, "&quot;")
+        .replace(/</g, "&lt;")
+        .replace(/>/g, "&gt;");
+}
+
 function formatBotText(text) {
     let safe = escapeHtml(text);
 
@@ -306,7 +314,7 @@ function addBotMessage(text){
             <div class="msg-content">
                 <div class="msg-bubble bot-bubble">${formatBotText(cleanText)}</div>
                 <div class="msg-actions">
-                    <button class="copy-btn" onclick="copyText(this)" data-copy="${escapeHtml(cleanText)}">Copy</button>
+                    <button class="copy-btn" onclick="copyText(this)" data-copy="${escapeAttribute(cleanText)}">Copy</button>
                 </div>
             </div>
         </div>
