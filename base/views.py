@@ -6,6 +6,7 @@ from .models import Module, ModulePart, QuizQuestion, QuizResult, Update
 import json
 import os
 import re
+import time
 
 
 def _validate_student_name(name):
@@ -248,6 +249,7 @@ def final_quiz(request):
             },
         )
 
+    percentage = 0
     return render(
         request,
         "final_quiz.html",
@@ -270,6 +272,13 @@ def certificate(request, result_id):
     result = get_object_or_404(QuizResult, id=result_id, module__isnull=True)
     percentage = (result.score / result.total * 100) if result.total else 0
     passed = percentage >= 60
+    if not passed:
+        return render(
+            request,
+            "error.html",
+            {"error": "Certificate is only available for passing scores (60%+)."},
+            status=403,
+        )
     return render(
         request,
         "certificate.html",
@@ -284,7 +293,17 @@ def certificate(request, result_id):
 @require_http_methods(["POST"])
 @csrf_protect
 def chat_api(request):
-    """Chat API endpoint with CSRF protection enabled."""
+    """Chat API endpoint with CSRF protection and rate limiting."""
+    # Rate limiting: max 20 messages per minute per session
+    now = time.time()
+    timestamps = request.session.get("chat_timestamps", [])
+    timestamps = [t for t in timestamps if now - t < 60]
+    if len(timestamps) >= 20:
+        return JsonResponse({"error": "Too many requests. Please wait a moment."}, status=429)
+    timestamps.append(now)
+    request.session["chat_timestamps"] = timestamps
+    request.session.modified = True
+
     try:
         data = json.loads(request.body.decode("utf-8"))
         user_message = data.get("message", "").strip()
